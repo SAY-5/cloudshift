@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: monolith
+  datasource:
+    url: ${MONOLITH_DB_URL:jdbc:h2:mem:monolith;DB_CLOSE_DELAY=-1}
+    username: ${MONOLITH_DB_USER:sa}
+    password: ${MONOLITH_DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: ${MONOLITH_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
