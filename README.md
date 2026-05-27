@@ -120,6 +120,24 @@ more than a 30 percent tolerance. The ratio is measured in the same run, so the
 gate catches a routing change that adds latency without being sensitive to how
 fast the runner is.
 
+## Migration safety
+
+Two mechanisms make the cutover safe, both in the gateway's
+`io.cloudshift.gateway.dualwrite` package:
+
+- Dual-write consistency. During the migration window a reservation write is
+  applied to both the monolith and the extracted service, and a consistency
+  check compares the two stored records on their business fields. Divergence is
+  counted and surfaced rather than silently accepted. The generated id is left
+  out of the comparison because the backends assign ids independently. Tests
+  prove that an injected divergence is detected and that a consistent dual-write
+  passes.
+- Rollback safety. The monolith receives every write in every phase, including
+  while the route is cut over to the service. Rolling back to the monolith
+  therefore finds a complete view with each record present exactly once. A test
+  cuts over, writes, rolls back, and asserts the monolith holds every write with
+  nothing lost and nothing duplicated.
+
 ## Cloud target
 
 The intended deployment target is Azure (Azure Container Apps or AKS), with the

@@ -66,9 +66,13 @@ Verification: a flipped route reaches the extracted service.
 ### Phase 4: rollback if needed
 
 If a problem appears after cutover, the target is flipped back to `MONOLITH`.
-Because reads and writes during the dual-write phase kept the monolith's view
-current, rolling back leaves a consistent monolith with no lost or duplicated
-records.
+Because the monolith receives every write in every phase, including while the
+route is cut over to the service, its view stays complete. Rolling back finds a
+monolith that holds each record exactly once, with nothing lost and nothing
+duplicated. The cutover coordinator
+(`io.cloudshift.gateway.dualwrite.CutoverCoordinator`) encodes this: it writes
+the monolith unconditionally and only adds the service once the migration window
+opens.
 
 ```bash
 RESERVATIONS_TARGET=MONOLITH docker compose up -d gateway
