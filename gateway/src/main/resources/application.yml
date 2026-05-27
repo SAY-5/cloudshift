@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+
+server:
+  port: ${GATEWAY_PORT:8080}
+
+cloudshift:
+  routing:
+    monolith-uri: ${MONOLITH_URI:http://localhost:8081}
+    capabilities:
+      reservations:
+        path-prefix: /reservations
+        service-uri: ${RESERVATION_SERVICE_URI:http://localhost:8082}
+        target: ${RESERVATIONS_TARGET:MONOLITH}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
