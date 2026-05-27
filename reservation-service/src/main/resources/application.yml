@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: reservation-service
+  datasource:
+    url: ${RESERVATION_DB_URL:jdbc:h2:mem:reservation;DB_CLOSE_DELAY=-1}
+    username: ${RESERVATION_DB_USER:sa}
+    password: ${RESERVATION_DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: ${RESERVATION_PORT:8082}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
