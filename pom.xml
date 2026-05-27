@@ -22,6 +22,7 @@
         <module>monolith</module>
         <module>reservation-service</module>
         <module>gateway</module>
+        <module>benchmark</module>
     </modules>
 
     <properties>
@@ -182,6 +183,9 @@
                         <systemPropertyVariables>
                             <api.version>${docker.api.version}</api.version>
                         </systemPropertyVariables>
+                        <excludes>
+                            <exclude>**/*Benchmark.java</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -205,4 +209,26 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>bench</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>none</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*Benchmark.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

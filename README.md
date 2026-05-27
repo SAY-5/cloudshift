@@ -97,6 +97,29 @@ docker compose up --build
 The gateway then serves the domain on `http://localhost:8080`. A smoke check
 that exercises the gateway end to end lives in `scripts/e2e-smoke.sh`.
 
+## Gateway routing overhead
+
+The `benchmark` module measures the latency the facade adds over calling a
+backend directly. The same backend is hit two ways in one run, straight and
+through the gateway, and the difference is the overhead. Run it with:
+
+```bash
+mvn -DskipTests install
+mvn -pl benchmark -Pbench test
+```
+
+A local run on 5000 requests after 1000 warmup requests measured a direct median
+of about 676 us and a gateway median of about 1105 us, so the facade added about
+429 us, or 63% over the direct median. Numbers vary by machine; the report is
+written to `benchmark/target/benchmark-report.md`.
+
+The CI `bench-regress` job runs this as a smoke gate. It compares the measured
+median overhead ratio against the recorded baseline in
+`benchmark/baseline.properties` and fails if the overhead exceeds the baseline by
+more than a 30 percent tolerance. The ratio is measured in the same run, so the
+gate catches a routing change that adds latency without being sensitive to how
+fast the runner is.
+
 ## Cloud target
 
 The intended deployment target is Azure (Azure Container Apps or AKS), with the

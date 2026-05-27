@@ -10,21 +10,21 @@
         <version>0.1.0</version>
     </parent>
 
-    <artifactId>gateway</artifactId>
-    <name>gateway</name>
-    <description>Strangler-fig facade routing each path to the monolith or an extracted service</description>
+    <artifactId>benchmark</artifactId>
+    <name>benchmark</name>
+    <description>Measures the latency the gateway facade adds over a direct backend call</description>
+
+    <properties>
+        <!-- The benchmark module is excluded from the coverage gate; it measures latency. -->
+        <jacoco.skip>true</jacoco.skip>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <groupId>io.cloudshift</groupId>
+            <artifactId>gateway</artifactId>
+            <version>0.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -37,8 +37,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -46,29 +47,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!-- Keep the plain jar as the main artifact so other modules can depend
-                         on the gateway classes; the executable jar gets the exec classifier. -->
-                    <classifier>exec</classifier>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
