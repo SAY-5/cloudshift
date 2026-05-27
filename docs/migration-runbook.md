@@ -39,6 +39,14 @@ check compares the results. Divergence is surfaced rather than silently
 accepted. This builds confidence that the extracted service behaves like the
 monolith for the same inputs.
 
+The dual-write coordinator lives in the gateway
+(`io.cloudshift.gateway.dualwrite`). A write is applied to both the monolith and
+the extracted service, the two stored records are compared on their business
+fields, and any divergence is counted. The generated id is excluded from the
+comparison because the two backends assign ids independently. The monolith stays
+the system of record during this phase, so its stored record is what the caller
+sees.
+
 Verification: a divergence injected into the comparison is detected, and a
 consistent dual-write passes.
 
