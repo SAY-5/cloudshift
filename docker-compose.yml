@@ -1,0 +1,64 @@
+services:
+  monolith-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: monolith
+      POSTGRES_USER: monolith
+      POSTGRES_PASSWORD: monolith
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U monolith"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  reservation-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: reservation
+      POSTGRES_USER: reservation
+      POSTGRES_PASSWORD: reservation
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reservation"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  monolith:
+    build: ./monolith
+    environment:
+      MONOLITH_DB_URL: jdbc:postgresql://monolith-db:5432/monolith
+      MONOLITH_DB_USER: monolith
+      MONOLITH_DB_PASSWORD: monolith
+      MONOLITH_PORT: 8081
+    depends_on:
+      monolith-db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+
+  reservation-service:
+    build: ./reservation-service
+    environment:
+      RESERVATION_DB_URL: jdbc:postgresql://reservation-db:5432/reservation
+      RESERVATION_DB_USER: reservation
+      RESERVATION_DB_PASSWORD: reservation
+      RESERVATION_PORT: 8082
+    depends_on:
+      reservation-db:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+
+  gateway:
+    build: ./gateway
+    environment:
+      GATEWAY_PORT: 8080
+      MONOLITH_URI: http://monolith:8081
+      RESERVATION_SERVICE_URI: http://reservation-service:8082
+      # Flip to SERVICE to cut the reservations capability over to the extracted service.
+      RESERVATIONS_TARGET: ${RESERVATIONS_TARGET:-MONOLITH}
+    depends_on:
+      - monolith
+      - reservation-service
+    ports:
+      - "8080:8080"
