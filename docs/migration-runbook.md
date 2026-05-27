@@ -83,4 +83,8 @@ of scope for the reference toolkit, which stops at a proven, reversible cutover.
 - Every other path falls through to the monolith.
 
 These invariants are enforced by the routing contract and property tests in the
-gateway module.
+gateway module. The contract tests check that every sampled path resolves to
+exactly one backend, that flipping a target moves only the matching capability,
+and that the monolith and the extracted service expose the same reservation
+field set so the migrated capability presents an equivalent contract on both
+backends.

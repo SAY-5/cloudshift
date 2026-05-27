@@ -33,7 +33,7 @@
         <spotless.version>2.43.0</spotless.version>
         <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
         <jacoco.version>0.8.12</jacoco.version>
-        <jacoco.line.min>0.00</jacoco.line.min>
+        <jacoco.line.min>0.80</jacoco.line.min>
         <docker.api.version>1.44</docker.api.version>
     </properties>
 
