@@ -1,0 +1,31 @@
+# Reference Azure Container App for the gateway. Template only, not applied.
+# Values in angle brackets are placeholders.
+properties:
+  managedEnvironmentId: <managed-environment-resource-id>
+  configuration:
+    ingress:
+      external: true
+      targetPort: 8080
+    registries:
+      - server: <registry>.azurecr.io
+        identity: system
+  template:
+    containers:
+      - name: gateway
+        image: <registry>.azurecr.io/cloudshift/gateway:<tag>
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: GATEWAY_PORT
+            value: "8080"
+          - name: MONOLITH_URI
+            value: https://monolith.<environment>.internal
+          - name: RESERVATION_SERVICE_URI
+            value: https://reservation-service.<environment>.internal
+          # Flip to SERVICE to cut the reservations capability over.
+          - name: RESERVATIONS_TARGET
+            value: MONOLITH
+    scale:
+      minReplicas: 1
+      maxReplicas: 3
